@@ -12,8 +12,8 @@
     import { isAuthenticated } from './store';
 
     // subscribe to the authentication status
-    let isLoggedIn: boolean;
-    isAuthenticated.subscribe((status) => {
+                                let isLoggedIn: boolean;
+                                                    isAuthenticated.subscribe((status) => {
         isLoggedIn = status;
     });
 
