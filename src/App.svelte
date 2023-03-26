@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { now } from "svelte/internal";
-
+	import { bind, now } from "svelte/internal";
 	import Content from "./Content.svelte";
 	import Message from "./Message.svelte";
 	import SSOButton from "./SOOButton.svelte";
 	import LogoutButton from "./LogoutButton.svelte";
 	import SOORevokeButton from "./SOORevokeButton.svelte";
+
+	import {parseDSL, visitor} from './dsl';
 	
 	import { validate } from "./session";
 	import { isAuthenticated } from "./store";
-	import { parseDSL } from "./dsl"
 
 	// subscribe to the authentication status
 	let isLoggedIn: boolean;
@@ -27,6 +27,7 @@
 
 	let content: messageType;
 	let filter: string;
+	let query: string;
 
 	let filterPorts: number[] = [];
 
@@ -76,6 +77,17 @@
 		content = event.detail;
 	}
 
+	async function submitQuery(s: string){
+		let v = await parseDSL(s);
+
+		console.log(v);
+
+		const result = await visitor.visit(v.cst);
+
+
+		console.log(result);
+	}
+
 	const sleep = (ms: number) => new Promise((f) => setTimeout(f, ms));
 
 	const test = async () => {
@@ -100,8 +112,6 @@
 		//dial();
 		test();
 		validate();
-		let ret = parseDSL("tcp.port eq 21")
-		console.log(ret)
 	});
 </script>
 
@@ -112,6 +122,10 @@
 	>
 	<input bind:value={filter} placeholder="Filter destination port" />
 	<button on:click={filterMessages}>Apply</button>
+	<input bind:value={query} placeholder="Enter your query"/>
+	<button on:click={()=>{
+		submitQuery(query);
+	}}>Submit Query</button>
 	<span>Port number and '&&' to concat.</span>
 	{#if !isLoggedIn}
 		<SSOButton />

@@ -6,6 +6,8 @@ import { terser } from 'rollup-plugin-terser';
 import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
 import css from 'rollup-plugin-css-only';
+import json from "@rollup/plugin-json";
+import chevrotain from 'chevrotain';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -33,7 +35,7 @@ function serve() {
 export default {
 	input: 'src/main.ts',
 	external: [
-		"chevrotain"
+		"chevrotain",
 	],
 	output: {
 		sourcemap: true,
@@ -41,7 +43,8 @@ export default {
 		name: 'app',
 		file: 'public/build/bundle.js',
 		globals: {
-			'chevrotain': 'chevrotain'
+			'chevrotain': 'chevrotain',
+			'jison':'jison',
 		},
 	},
 	onwarn(warning, warn) {
@@ -87,6 +90,7 @@ export default {
 			sourceMap: !production,
 			inlineSources: !production
 		}),
+		json(),
 
 		// In dev mode, call `npm run start` once
 		// the bundle has been generated

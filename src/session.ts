@@ -1,4 +1,3 @@
-
 import { isAuthenticated, user, token } from "./store";
 
 let jwt: string
